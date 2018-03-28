@@ -1,4 +1,4 @@
-/* Description: this file has code to test touch on two capsense pins using a common receive pin.
+/* Description: To test absolute touch on two capsense pins using a common receive pin.
   The file outputs RC time constant values (need to confirm with scope) to the serial monitor. 
   These are the return value outputted by capsense library function
 */
