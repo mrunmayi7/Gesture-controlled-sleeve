@@ -1,3 +1,8 @@
+/*
+ * == SLAVE CODE ==
+ * Receive data from the master and print to Serial Monitor
+ */
+
 #include <SoftwareSerial.h>
 
 SoftwareSerial BTSerial(10,11);  //RX,TX
