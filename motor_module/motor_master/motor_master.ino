@@ -66,7 +66,8 @@ void CallStateListener() {
   if ((buttonVal == HIGH) && (callVal == LOW)) {
     callVal = HIGH;
     previousMillis = currentMillis; // Mark time call was detected
-    Serial.println("\n\n'Incoming Call' detected");
+    Serial.println("\n\n'Incoming Call' detected.");
+    Serial.println(callVal);
   }
     
 }
@@ -77,7 +78,8 @@ void RingStateListener() {
 
   if ((callVal == HIGH) && (currentMillis - previousMillis > callMaxDuration)) {
     callVal = LOW;
-    Serial.println("End of call");
+    Serial.println("\nReached max ring length. End of call.");
+    Serial.println(callVal);
   }
 }
 
