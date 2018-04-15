@@ -96,12 +96,8 @@ void switchMotor() {
     // Vibrate motor 5 times and interrupt to turn off/mute if button is pressed again
 
 //    Serial.println("Turn motor on");
+    if
     analogWrite(motorPin, motorOn);
-    delay(500);
-
-    analogWrite(motorPin, 0);
-    delay(100);
-
   }
   else if (motorFlag == 0) {
     analogWrite(motorPin, 0);
