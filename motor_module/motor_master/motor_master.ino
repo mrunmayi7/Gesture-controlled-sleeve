@@ -15,7 +15,7 @@ const int motorPin = 3; // output pin for vibration motor
 const int buttonPin = 2;  // input pin for push button
 
 const int debounce = 300; // number of milliseconds between button readings to avoid debouncing
-const int callMaxDuration = 7500;  // maximum ring length before call redirects
+const int callMaxDuration = 10000;  // maximum ring length before call redirects
 
 SoftwareSerial BTSerial(10, 11); // RX | TX pins (that should receive TX | RX respectively)
 
@@ -23,6 +23,7 @@ SoftwareSerial BTSerial(10, 11); // RX | TX pins (that should receive TX | RX re
 // --------- VARIABLES ---------
 int buttonVal = LOW;
 int callVal = LOW;
+int gestureVal = 0;
 
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
