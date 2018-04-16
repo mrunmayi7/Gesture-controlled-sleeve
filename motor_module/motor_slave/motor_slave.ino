@@ -14,8 +14,6 @@
 const int motorPin = 3; // output pin for vibration motor
 const int buttonPin = 2;  // input pin for push button
 
-const int callMaxDuration = 5000;  // maximum ring length before call redirects
-
 SoftwareSerial BTSerial(10, 11); // RX | TX pins (that should receive TX | RX respectively)
 
 
@@ -24,11 +22,20 @@ int callVal = LOW;
 int motorVal = 0;
 int motorOn = 51 * 2.0;
 int motorState = 0;
-int motorCount;
-int motorFlag;
+int pauseState = 1;
+int motorCount = 0;
+int motorFlag = 0;
+int muteMotor = 0;
+
+unsigned long motorOnTime = 400;
+unsigned long motorShortDelayTime = 200;
+unsigned long motorLongDelayTime = 500;
 
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
+
+unsigned long motorCurrentMillis = 0;
+unsigned long motorPreviousMillis = 0;
 
 
 //========================================
@@ -51,7 +58,8 @@ void loop() {
   currentMillis = millis(); 
   
   BTStateListener();  // listens for data from master Bluetooh device
-  updateMotorStates();
+  updateState();
+  updateMotor();
   switchMotor();
 
 }
@@ -63,44 +71,104 @@ void BTStateListener() {
   // Constantly checks for data from BT master device
   if (BTSerial.available() > 0) {
     callVal = BTSerial.read();
-    Serial.println(callVal);
+//    Serial.println(callVal);
   }
 }
 
 //========================================
 
 
-void updateMotorStates() {
-  if (callVal == LOW) {
-    motorState = 0;
+void updateState() {
+
+  // There is no incoming call OR motor has been muted 
+  if ((callVal == LOW)) {
     
+    // Detect that call has ended. Reinitilaize motorflag and motorstate.
     if (motorFlag == 1) {
-      motorFlag = 0;
       Serial.println("End of call");
-    }
-  }
-  else if (callVal == HIGH) {
-    motorState = 1;
-    
-    if (motorFlag == 0) {
-      motorFlag = 1;
       motorCount = 0;
+    }
+    motorFlag = 0;
+    motorState = 0;
+  }
+
+  // There is an incoming call AND motor has not been muted
+  else if ((callVal == HIGH)) {
+    
+    // Detect this is the first instance of a call (not ongoing incoming call).
+    if (motorFlag == 0) {
       Serial.println("\n\n'Incoming Call' detected");
+      pauseState = 0;
+      previousMillis = currentMillis;
+    }
+    motorFlag = 1;
+    motorState = 1;
+  }
+  
+}
+
+//========================================
+
+void updateMotor() {
+  
+  if (motorState == 1) {
+  
+    // vibrate motor for 500 milliseconds
+    if (pauseState == 0) {
+      
+      if (currentMillis - previousMillis > motorOnTime) {
+        // time is up, so change pausestate accordingly (turn off motor for long or short pause)
+        previousMillis = currentMillis;
+        pauseState = 1;
+        
+        if (motorCount < 5) {
+          // short cycle found, turn off motor for short pause
+          pauseState = 1;
+          Serial.println("Short pause");
+        }
+        else if (motorCount == 5) {
+          // long cycle found, turn off motor for long pause
+          pauseState = 2;
+          motorCount = 0;
+          Serial.println("Long pause");
+        }
+      }
+    }
+    
+    // pause motor for 100 milliseconds (short pause)
+    if (pauseState == 1) {
+
+      if (currentMillis - previousMillis > motorShortDelayTime) {
+        // time is up, so change pausestate accordingly (turn on motor)
+        previousMillis = currentMillis;
+        
+        pauseState = 0;
+        motorCount++; // completed one single cycle of vibrate + short pause
+      }
+    }
+
+    // pause motor for 500 milliseconds (long pause)
+    if (pauseState == 2) { 
+    
+      if (currentMillis - previousMillis > motorLongDelayTime) {
+        previousMillis = currentMillis;
+        
+        pauseState = 0;
+        motorCount = 0; // reinitialize cycle count for vibrate + short pause
+      }
     }
   }
+  
 }
+
+//========================================
 
 void switchMotor() {
 
-  if (motorState == 1) {
-    // Vibrate motor 5 times and interrupt to turn off/mute if button is pressed again
-
-//    Serial.println("Turn motor on");
-    if
+  if (pauseState == 0)
     analogWrite(motorPin, motorOn);
-  }
-  else if (motorFlag == 0) {
+  if ((pauseState == 1) || (pauseState == 2) || (motorState == 0))
     analogWrite(motorPin, 0);
-  } 
+  
 }
 
