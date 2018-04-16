@@ -20,7 +20,8 @@ SoftwareSerial BTSerial(10, 11); // RX | TX pins (that should receive TX | RX re
 // --------- VARIABLES ---------
 int callVal = LOW;
 int motorVal = 0;
-int motorOn = 51 * 2.0;
+//int motorOn = 51 * 2.0;
+long motorOn = 77.3 * 2.0;
 int motorState = 0;
 int pauseState = 1;
 int motorCount = 0;
