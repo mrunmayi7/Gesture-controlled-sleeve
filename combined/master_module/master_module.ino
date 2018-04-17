@@ -67,7 +67,7 @@ void SleeveStateListener() {
     gestureVal = BTSerial.read();
     
     // print to serial to check
-    if (gestureVal != prevGesture) {
+    if (gestureVal == 1 || gestureVal == 2 || gestureVal == 3 || gestureVal == 4) {
       if (gestureVal != 0) {
         Serial.print("New gesture detected: ");
         Serial.println(gestureVal);

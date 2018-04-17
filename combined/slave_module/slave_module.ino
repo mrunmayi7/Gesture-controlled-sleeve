@@ -123,19 +123,19 @@ void loop() {
   switchMotor();
 
   // if gesture detected
-  if (gestureVal != 0) {
-    BTSerial.write(gestureVal);  // bluetooth transmit
-
-//    if (BTSerial.available() > 0) {
-//      gestureReceived = BTSerial.read();
+//  if (gestureVal == 1 || gestureVal == 2 || gestureVal == 3 || gestureVal == 4) {
+//    BTSerial.write(gestureVal);  // bluetooth transmit
 //
-//      if (gestureConfirmation == gestureVal) {
-//        gestureVal = 0; // reset gestureVal     
-//      }
-//    }
-
-    gestureVal = 0; // reset gestureVal
-  }
+////    if (BTSerial.available() > 0) {
+////      gestureReceived = BTSerial.read();
+////
+////      if (gestureConfirmation == gestureVal) {
+////        gestureVal = 0; // reset gestureVal     
+////      }
+////    }
+//
+//    gestureVal = 0; // reset gestureVal
+//  }
 
 //  Serial.println("Check");
   
@@ -376,6 +376,9 @@ void GestureDetectionLoop() {
       start7 = 0; 
       
       gestureVal = 2;
+
+      BTSerial.write(gestureVal);
+      gestureVal = 0;
      }
 
      if (taps == 1){
