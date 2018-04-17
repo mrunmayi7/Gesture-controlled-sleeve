@@ -19,13 +19,15 @@ CapacitiveSensor   cs_4_9 = CapacitiveSensor(4,9);        // 10 megohm resistor 
 
 
 SoftwareSerial BTSerial(10, 11); // RX | TX pins (that should receive TX | RX respectively)
+//SoftwareSerial BTSerial(A0, A1); // RX | TX pins (that should receive TX | RX respectively)
 
 
 // --------- VARIABLES ---------
 int callVal = LOW;
 int motorVal = 0;
-//int motorOn = 51 * 2.0;
-long motorOn = 77.3 * 3.3;  // ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)
+int motorOn = 51 * 2.0;
+//long motorOn = 77.3 * 3.3;  // ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)
+
 int motorState = 0;
 int pauseState = 1;
 int motorCount = 0;
@@ -45,7 +47,7 @@ unsigned long motorCurrentMillis = 0;
 unsigned long motorPreviousMillis = 0;
 
 // GESTURE CONTORL VARIABLES
-long touchedCutoff = 1000;
+long touchedCutoff = 5000;
 long counter1 = 0;
 long counter2 = 0;
 long counter3 = 0;
@@ -112,10 +114,12 @@ void loop() {
 
   BTStateListener();  // listens for data from master Bluetooth device
   updateState();
+  
   if (callVal == LOW || motorState == 0) {
     GestureDetectionLoop();  
   }
   updateMotor();
+  checkMuteMotor();
   switchMotor();
 
   // if gesture detected
@@ -132,6 +136,8 @@ void loop() {
 
     gestureVal = 0; // reset gestureVal
   }
+
+//  Serial.println("Check");
   
   
 }
@@ -152,32 +158,42 @@ void BTStateListener() {
 void updateState() {
 
   // There is no incoming call OR motor has been muted 
-  if (callVal == LOW || motorState == 0) {
+  if (callVal == LOW || muteMotor == 1) {
     // GESTURE LOOP
 
     // Detect that call has ended. Reinitilaize motorflag and motorstate.
     if (motorFlag == 1) {
       Serial.println("End of call");
       motorCount = 0;
+      muteMotor = 0;
     }
     motorFlag = 0;
     motorState = 0;
   }
   
-  // There is an incoming call AND motor has not been muted
-  else if (callVal == HIGH && motorState == 1) {
+  // !!!!! === CURRENTLY CHANGING NEED TO RETURN TO THIS CONDITIONAL ==== !!!!!!
+  // There is an incoming call AND the motor has not been muted
+  else if (callVal == HIGH && muteMotor == 0) {
     // MOTOR LOOP
-
+  
     // Detect this is the first instance of a call (not ongoing incoming call).
     if (motorFlag == 0) {
       Serial.println("\n\n'Incoming Call' detected");
       pauseState = 0;
       previousMillis = currentMillis;
     }
+      
     motorFlag = 1;
     motorState = 1;
+    
   }
   
+}
+
+//========================================
+
+void checkMuteMotor() {
+  // check 
 }
 
 //========================================
@@ -258,27 +274,47 @@ void GestureDetectionLoop() {
     long total3 =  cs_4_8.capacitiveSensor(30);
     long total4 =  cs_4_9.capacitiveSensor(30);
 
+    Serial.print(total1);
+    Serial.print("\t");
+    Serial.print(total2);
+    Serial.print("\t");
+    Serial.print(total3);
+    Serial.print("\t");
+    Serial.println(total4);
+
     if (total1 > touchedCutoff) {
-//      digitalWrite(LEDPin0, HIGH);
+      digitalWrite(LEDPin12, HIGH);
+
+//      Serial.println("Line 2 touched");
+//      Serial.println(total1);
+      
       counter1 += 10;
       start1 = millis(); 
     }
     else{
-//      digitalWrite(LEDPin0, LOW);
+      digitalWrite(LEDPin12, LOW);
     }
   
     if (total2 > touchedCutoff){
-//      digitalWrite(LEDPin1, HIGH);
+      digitalWrite(LEDPin13, HIGH);
+
+//      Serial.println("Line 5 touched");
+//      Serial.println(total2);
+      
       counter2 += 10;
       start2 = millis(); 
     }
   
     else {
-//      digitalWrite(LEDPin1, LOW);
+      digitalWrite(LEDPin13, LOW);
     }
   
     if (total3 > touchedCutoff){
       digitalWrite(LEDPin6, HIGH);
+      
+//      Serial.println("Line 8 touched");
+//      Serial.println(total3);
+      
       counter3 += 10;
       start3 = millis(); 
     }
@@ -289,6 +325,10 @@ void GestureDetectionLoop() {
 
     if (total4 > touchedCutoff){
       digitalWrite(LEDPin7, HIGH);
+      
+//      Serial.println("Line 9 touched");
+//      Serial.println(total4);
+      
       counter4 += 10;
       start7 = millis(); 
     }
@@ -308,8 +348,8 @@ void GestureDetectionLoop() {
 
      //swipe down
      if(delta1 > 50 && delta1 < 1000 && counter1 != 0 && counter2 != 0 && counter3 != 0 && counter4 != 0 && delta2 > 50 && delta2 < 1000 && delta4 > 50 && delta4 < 1000){        
-      Serial.print("Swipe Down Detected: "); // ************
-      digitalWrite(LEDPin12, HIGH);
+      Serial.print("\n\nSwipe Down Detected: "); // ************
+//      digitalWrite(LEDPin12, HIGH);
       counter1 = 0;
       counter2 = 0;
       counter3 = 0;
@@ -323,8 +363,8 @@ void GestureDetectionLoop() {
      }
 
      if(delta1 < -50 && delta1 > -1000 && counter1 != 0 && counter2 != 0 && counter3 != 0 && counter4 != 0 && delta2 < -50 && delta2 > -1000 && delta4 < -50 && delta4 > -1000){        
-      Serial.print("Swipe Up Detected: "); // ************
-      digitalWrite(LEDPin13, HIGH);
+      Serial.print("\n\nSwipe Up Detected: "); // ************
+//      digitalWrite(LEDPin13, HIGH);
       counter1 = 0;
       counter2 = 0;
       counter3 = 0;

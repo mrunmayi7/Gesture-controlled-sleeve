@@ -69,7 +69,7 @@ void SleeveStateListener() {
     // print to serial to check
     if (gestureVal != prevGesture) {
       if (gestureVal != 0) {
-        Serial.print("New gesture detected ");
+        Serial.print("New gesture detected: ");
         Serial.println(gestureVal);
       }
     }
