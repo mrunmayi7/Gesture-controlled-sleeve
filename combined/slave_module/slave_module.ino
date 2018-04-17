@@ -47,7 +47,7 @@ unsigned long motorCurrentMillis = 0;
 unsigned long motorPreviousMillis = 0;
 
 // GESTURE CONTORL VARIABLES
-long touchedCutoff = 5000;
+long touchedCutoff = 3000;
 long counter1 = 0;
 long counter2 = 0;
 long counter3 = 0;
@@ -71,7 +71,7 @@ int taps = 0;
 int doubleTap = 0;
 
 unsigned long current;
-int interval = 100;
+int interval = 50;
 
 unsigned long previous = 0;
 
@@ -114,10 +114,10 @@ void loop() {
 
   BTStateListener();  // listens for data from master Bluetooth device
   updateState();
-  
-  if (callVal == LOW || motorState == 0) {
-    GestureDetectionLoop();  
-  }
+//  
+//  if (callVal == LOW || motorState == 0) {
+//    GestureDetectionLoop();  
+//  }
   updateMotor();
   checkMuteMotor();
   switchMotor();
@@ -169,6 +169,7 @@ void updateState() {
     }
     motorFlag = 0;
     motorState = 0;
+    GestureDetectionLoop();  
   }
   
   // !!!!! === CURRENTLY CHANGING NEED TO RETURN TO THIS CONDITIONAL ==== !!!!!!
