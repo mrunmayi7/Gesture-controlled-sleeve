@@ -174,12 +174,6 @@ void updateState() {
 
 //========================================
 
-void checkMuteMotor() {
-  // check 
-}
-
-//========================================
-
 void updateMotor() {
   
   if (motorState == 1) {
