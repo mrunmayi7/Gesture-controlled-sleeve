@@ -149,6 +149,8 @@ void updateState() {
     }
     motorFlag = 0;
     motorState = 0;
+    muteMotor = 0;
+    
     GestureDetectionLoop();  
   }
   
@@ -250,15 +252,10 @@ void MuteRingListener() {
     long total3 =  cs_4_8.capacitiveSensor(30);
     long total4 =  cs_4_9.capacitiveSensor(30);
 
-     if (total1 < touchedCutoff && total2 > touchedCutoff && total3 > touchedCutoff && total4 < touchedCutoff) {
-        muteMotor = 1;
-     }
-     else {
-        muteMotor = 0;
-     }
-      
-      
-     }
+    if (total1 < touchedCutoff && total2 > touchedCutoff && total3 > touchedCutoff && total4 < touchedCutoff) {
+      muteMotor = 1;
+    }
+  }
 }
 
 
