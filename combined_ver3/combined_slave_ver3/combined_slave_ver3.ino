@@ -174,8 +174,10 @@ void updateState() {
 
   else if (callVal == HIGH && muteMotor == 1) {
     muteMotor = 1; // muteMotor until end of call detected
-    motorFlag = 0;
+    motorFlag = 1;
     motorState = 0;
+    
+    GestureDetectionLoop();  
   }
   
 }
