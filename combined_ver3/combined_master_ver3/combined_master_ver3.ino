@@ -7,6 +7,7 @@
 // --------- LIBRARIES ---------
 //#include <SoftwareSerial.h>
 #include "AltSoftSerial.h"
+#include "MaxMatrix.h"
 
 
 // --------- CONSTANTS ---------
@@ -15,6 +16,10 @@ const int buttonPin = 2;  // input pin for push button
 
 const int debounce = 300; // number of milliseconds between button readings to avoid debouncing
 const int callMaxDuration = 10000;  // maximum ring length before call redirects
+
+const int DIN = 11;   // DIN pin of MAX7219 module
+const int CLK = 13;   // CLK pin of MAX7219 module
+const int CS = 10;    // CS pin of MAX7219 module
 
 AltSoftSerial BTSerial(8, 9); // RX | TX pins (that should receive TX | RX respectively)
 
@@ -27,6 +32,22 @@ int prevGesture = 0;
 
 unsigned long currentMillis = 0;
 unsigned long previousMillis = 0;
+
+int i = 0; 
+int maxInUse = 1;
+
+MaxMatrix m(DIN, CS, CLK, maxInUse); 
+
+char block[] = {8, 8,
+                  B11111111,
+                  B11111111,
+                  B11111111,
+                  B11111111,
+                  B11111111,
+                  B11111111,
+                  B11111111,
+                  B11111111
+                 };
 
 
 //========================================
@@ -41,6 +62,9 @@ void setup() {
 
   Serial.println("Start up HC-05 master module. Push button to activate motor.");
 
+  m.init(); // MAX7219 initialization
+  m.setIntensity(8); // initial led matrix intensity, 0-15
+
 }
 
 void loop() {
@@ -50,7 +74,7 @@ void loop() {
   currentMillis = millis(); 
 
   SleeveStateListener();
-//  updateLEDMatrix();
+  
 
   CallStateListener();  // listens for incoming call
   RingStateListener();
@@ -72,6 +96,7 @@ void SleeveStateListener() {
       if (gestureVal != 0) {
         Serial.print("New gesture detected: ");
         Serial.println(gestureVal);
+        updateLEDMatrix();
       }
     }
     prevGesture = gestureVal;
@@ -82,7 +107,48 @@ void SleeveStateListener() {
 //========================================
 
 void updateLEDMatrix() {
-  // coming soon!!!!!!
+  //swipe up
+  if (gestureVal == 2){
+    m.writeSprite(0, 0, block);
+//    delay(1000);
+    for (int i=0; i<16; i++){
+      m.shiftUp(false);
+      delay(50);
+    }
+    m.clear();
+  }
+
+  //swipe down
+  if (gestureVal == 1){
+    m.writeSprite(0, 0, block);
+//    delay(1000);
+    for (int i=0; i<16; i++){
+      m.shiftDown(false);
+      delay(50);
+    }
+    m.clear();
+  }
+
+  //single tap
+  if (gestureVal == 3){
+    m.writeSprite(0, 0, block);
+//    delay(1000);
+    m.clear();
+//    delay(1000);
+  }
+
+  //double tap
+  if (gestureVal == 4){
+    m.writeSprite(0, 0, block);
+//    delay(500);
+    m.clear();
+//    delay(500);
+    m.writeSprite(0, 0, block);
+//    delay(500);
+    m.clear();
+//    delay(10000);
+  }
+  
 }
 
 //========================================

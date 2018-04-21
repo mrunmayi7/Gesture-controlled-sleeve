@@ -166,6 +166,7 @@ void updateState() {
       
     motorFlag = 1;
     motorState = 1;
+    MuteRingListener();
     
   }
   
@@ -241,6 +242,31 @@ void switchMotor() {
     analogWrite(motorPin, 0);
   
 }
+
+//========================================
+
+void MuteRingListener() {
+  // Detect single tap only
+  if(current - previous >= interval){
+    previous = current;
+    Serial.print('\n');
+    long start = millis();
+    long total1 =  cs_4_2.capacitiveSensor(30);
+    long total2 =  cs_4_5.capacitiveSensor(30);
+    long total3 =  cs_4_8.capacitiveSensor(30);
+    long total4 =  cs_4_9.capacitiveSensor(30);
+
+     if (total1 < touchedCutoff && total2 > touchedCutoff && total3 > touchedCutoff && total4 < touchedCutoff) {
+        muteMotor = 1;
+     }
+     else {
+        muteMotor = 0;
+     }
+      
+      
+     }
+}
+
 
 //========================================
 
@@ -448,5 +474,3 @@ void GestureDetectionLoop() {
     
    }
 }
-
-
