@@ -117,7 +117,7 @@ void loop() {
   updateState();
 
   updateMotor();
-  checkMuteMotor();
+//  checkMuteMotor();
   switchMotor();
   
 }
@@ -138,7 +138,7 @@ void BTStateListener() {
 void updateState() {
 
   // There is no incoming call OR motor has been muted 
-  if (callVal == LOW || muteMotor == 1) {
+  if (callVal == LOW) {
     // GESTURE LOOP
 
     // Detect that call has ended. Reinitilaize motorflag and motorstate.
@@ -170,6 +170,12 @@ void updateState() {
     motorState = 1;
     MuteRingListener();
     
+  }
+
+  else if (callVal == HIGH && muteMotor == 1) {
+    muteMotor = 1; // muteMotor until end of call detected
+    motorFlag = 0;
+    motorState = 0;
   }
   
 }
@@ -254,6 +260,7 @@ void MuteRingListener() {
 
     if (total1 < touchedCutoff && total2 > touchedCutoff && total3 > touchedCutoff && total4 < touchedCutoff) {
       muteMotor = 1;
+      Serial.println("Detected touch to mute the motor!");
     }
   }
 }
