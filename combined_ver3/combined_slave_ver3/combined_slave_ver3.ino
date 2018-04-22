@@ -26,8 +26,8 @@ AltSoftSerial BTSerial(8, 9); // RX | TX pins (that should receive TX | RX respe
 // --------- VARIABLES ---------
 int callVal = LOW;
 int motorVal = 0;
-int motorOn = 51 * 2.0;
-//long motorOn = 77.3 * 3.3;  // ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)
+//int motorOn = 51 * 2.0;
+long motorOn = 77.3 * 3.3;  // ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)
 
 int motorState = 0;
 int pauseState = 1;
@@ -143,7 +143,7 @@ void updateState() {
 
     // Detect that call has ended. Reinitilaize motorflag and motorstate.
     if (motorFlag == 1) {
-      Serial.println("End of call");
+      Serial.println("\nEnd of call");
       motorCount = 0;
       muteMotor = 0;
     }
@@ -199,13 +199,13 @@ void updateMotor() {
         if (motorCount < 5) {
           // short cycle found, turn off motor for short pause
           pauseState = 1;
-          Serial.println("Short pause");
+//          Serial.println("Short pause");
         }
         else if (motorCount == 5) {
           // long cycle found, turn off motor for long pause
           pauseState = 2;
           motorCount = 0;
-          Serial.println("Long pause");
+//          Serial.println("Long pause");
         }
       }
     }
@@ -253,7 +253,7 @@ void MuteRingListener() {
   // Detect single tap only
   if(current - previous >= interval){
     previous = current;
-    Serial.print('\n');
+//    Serial.print('\n');
     long start = millis();
     long total1 =  cs_4_2.capacitiveSensor(30);
     long total2 =  cs_4_5.capacitiveSensor(30);
@@ -287,7 +287,7 @@ void GestureDetectionLoop() {
     Serial.print("\t");
     Serial.print(total3);
     Serial.print("\t");
-    Serial.println(total4);
+    Serial.print(total4);
 
     if (total1 > touchedCutoff) {
       digitalWrite(LEDPin12, HIGH);
