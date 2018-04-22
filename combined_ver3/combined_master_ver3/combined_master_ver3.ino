@@ -140,11 +140,11 @@ void updateLEDMatrix() {
   //double tap
   if (gestureVal == 4){
     m.writeSprite(0, 0, block);
-//    delay(500);
+    delay(500);
     m.clear();
-//    delay(500);
+    delay(500);
     m.writeSprite(0, 0, block);
-//    delay(500);
+    delay(500);
     m.clear();
 //    delay(10000);
   }

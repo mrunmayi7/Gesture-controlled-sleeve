@@ -26,8 +26,8 @@ AltSoftSerial BTSerial(8, 9); // RX | TX pins (that should receive TX | RX respe
 // --------- VARIABLES ---------
 int callVal = LOW;
 int motorVal = 0;
-//int motorOn = 51 * 2.0;
-long motorOn = 77.3 * 3.3;  // ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)
+int motorOn = 51 * 2.5;
+//long motorOn = 77.3 * 3.3;  // IMPORTANT: ONLY USE FOR MCU ON BREADBOARD/PCB (max power 3.3V)!!!
 
 int motorState = 0;
 int pauseState = 1;
@@ -356,7 +356,7 @@ void GestureDetectionLoop() {
      //swipe down
      if(delta1 > 50 && delta1 < 1000 && counter1 != 0 && counter2 != 0 && counter3 != 0 && counter4 != 0 && delta2 > 50 && delta2 < 1000 && delta4 > 50 && delta4 < 1000){        
       Serial.print("\n\nSwipe Down Detected: "); // ************
-//      digitalWrite(LEDPin12, HIGH);
+      digitalWrite(LEDPin12, HIGH);
       counter1 = 0;
       counter2 = 0;
       counter3 = 0;
@@ -373,7 +373,7 @@ void GestureDetectionLoop() {
 
      if(delta1 < -50 && delta1 > -1000 && counter1 != 0 && counter2 != 0 && counter3 != 0 && counter4 != 0 && delta2 < -50 && delta2 > -1000 && delta4 < -50 && delta4 > -1000){        
       Serial.print("\n\nSwipe Up Detected: "); // ************
-//      digitalWrite(LEDPin13, HIGH);
+      digitalWrite(LEDPin13, HIGH);
       counter1 = 0;
       counter2 = 0;
       counter3 = 0;
