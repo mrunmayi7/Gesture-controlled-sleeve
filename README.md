@@ -1,4 +1,8 @@
-#CapacitiveSensor Library#
+#Gesture Control Sleeve #
+
+This repo relates to a capstone project to prototype a gesture control sleeve that uses capacitive sensing to detect different gestures performed by a user on the sleeve. The sleeve itself has a set of conductive threads running in parallel to implement the capacitive sensing capability. It also has a microcontroller and a BLE module to communicate with other bluetooth devices.
+
+CapacitiveSensor Library
 
 CapacitiveSensor lets you create sensors that can detect touch or proximity. 
 
